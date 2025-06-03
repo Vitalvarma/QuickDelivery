@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_URL = 'http://localhost:5000/api/auth'; 
+const API_URL = import.meta.VITE_ENV==='development' ? import.meta.env.VITE_API_URL : "/api"; 
 
 const useAuthStore = create((set) => ({
   user: null,
@@ -20,7 +20,7 @@ const useAuthStore = create((set) => ({
   register: async (username, email, password, role) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/register`, {
+      const response = await axios.post(`${API_URL}/auth/register`, {
         username,
         email,
         password,
@@ -49,7 +49,7 @@ const useAuthStore = create((set) => ({
   login: async (email, password, role) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/login`, {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
         role,
@@ -77,7 +77,7 @@ const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
       toast.success('Logout successful');
     } catch (error) {
       toast.error(error.response?.data?.message || error.message || 'Logout failed');
@@ -98,12 +98,12 @@ const useAuthStore = create((set) => ({
       }
       if(!token) {
         // If no token, try to refresh
-        const response = await axios.post(`${API_URL}/refreshToken`, {}, { withCredentials: true });
+        const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
         localStorage.setItem('token', response.data.accessToken);
         set({ token: response.data.accessToken });
       }
 
-      const response = await axios.get(`${API_URL}/checkAuth`, {
+      const response = await axios.get(`${API_URL}/auth/checkAuth`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
