@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useAuthStore from "../stores/authStore";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
     const [username, setUsername] = useState("");
@@ -10,62 +11,35 @@ const RegisterPage = () => {
     const [role, setRole] = useState("customer");
     const [termsAccepted, setTermsAccepted] = useState(false);
 
-    const [loading, setLoading] = useState(false);
-
     const { register } = useAuthStore();
+    const navigate = useNavigate();
 
 
     const handleRegister = (e) => {
 
         e.preventDefault();
-        setLoading(true);
         // Handle registration logic here
         if (password !== confirmPassword) {
-            alert("Passwords do not match!");
+            toast.error("Passwords do not match!");
             return;
         }
         if (!termsAccepted) {
-            alert("Please accept the terms and conditions!");
+            toast.error("You must accept the terms and conditions to register.");
             return;
         }
         // Simulate registration success
-        register(username, email, password, role)
-            .then((response) => {
-                setUsername("");
-                setEmail("");
-                setPassword("");
-                setConfirmPassword("");
-                setRole("customer");
-                setTermsAccepted(false);
-                if (response.success) {
-                    // Redirect to login or dashboard
-                    toast.success(response.message);
-                    setTimeout(()=>{
-                        window.location.href = "/";
-                    },1000);
-                } else {
-                    setLoading(false);
-                    toast.error(response?.error || response?.message);
-                }
-            })
-            .catch((error) => {
-                setLoading(false);
-                console.error("Registration error:", error);
-                alert("An error occurred during registration. Please try again.");
-            });
-        
+        register(username, email, password, role);
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setRole("customer");
+        setTermsAccepted(false);
+        navigate("/dashboard");
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-red-50 flex items-center justify-center p-4">
-            {loading && (
-                <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-                    <div className="flex space-x-4">
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-green-500 border-t-red-500"></div>
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-red-500 border-t-green-500"></div>
-                    </div>
-                </div>
-            )}
             <form 
                 className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden"
                 onSubmit={handleRegister}
@@ -198,7 +172,6 @@ const RegisterPage = () => {
                     <button 
                         type="submit" 
                         className="w-full bg-gradient-to-r from-green-500 to-red-500 text-white py-3 px-4 rounded-md hover:from-green-600 hover:to-red-600 transition duration-200 shadow-md font-medium mt-4"
-                        disabled={!termsAccepted}
                     >
                         Create Account
                     </button>

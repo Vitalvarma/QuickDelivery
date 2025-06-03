@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const API_URL = 'http://localhost:5000/api/auth'; 
 
@@ -33,13 +34,13 @@ const useAuthStore = create((set) => ({
       });
       
       localStorage.setItem('token', response.data.accessToken);
-      return { success: true ,message: response.data.message };
+      toast.success(response.data.message || 'Registration successful');
     } catch (error) {
       set({ 
         error: error.response?.data?.message || error.message || 'Registration failed', 
         isAuthenticated: false 
       });
-      return { success: false, error: error.response?.data?.message || error.message };
+      toast.error(error.response?.data?.message || error.message || 'Registration failed');
     } finally {
       set({ isLoading: false });
     }
@@ -62,13 +63,13 @@ const useAuthStore = create((set) => ({
 
       
       localStorage.setItem('token', response.data.accessToken);
-      return { success: true, message: response.data.message };
+      toast.success(response.data.message || 'Login successful');
     } catch (error) {
       set({ 
         error: error.response?.data?.message || error.message || 'Login failed', 
         isAuthenticated: false 
       });
-      return { success: false, error: error.response?.data?.message || error.message };
+      toast.error(error.response?.data?.message || error.message || 'Login failed');
     } finally {
       set({ isLoading: false });
     }
@@ -77,9 +78,9 @@ const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
-      return { success: true, message: 'Logout successful' };
+      toast.success('Logout successful');
     } catch (error) {
-      return {success: false, message: error.message };
+      toast.error(error.response?.data?.message || error.message || 'Logout failed');
     } finally {
       set({ user: null, token: null, isAuthenticated: false });
       localStorage.removeItem('token');
@@ -118,7 +119,6 @@ const useAuthStore = create((set) => ({
         error: error.response?.data?.message || error.message, 
         isAuthenticated: false 
       });
-      localStorage.removeItem('token');
     } finally {
       set({ isLoading: false });
     }

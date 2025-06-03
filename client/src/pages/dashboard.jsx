@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useAuthStore from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,102 +6,18 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const {
     user,
-    isAuthenticated,
     error,
     isLoading,
-    logout,
-    checkAuth
+    logout
   } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState('home');
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    navigate('/login');
+    setActiveTab('home'); // Reset active tab on logout
   };
-
-  if (isAuthenticated === null || isLoading) {
-    return (
-      <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-                    <div className="flex space-x-4">
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-green-500 border-t-red-500"></div>
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-red-500 border-t-green-500"></div>
-                    </div>
-                </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">
-            Access Denied
-          </h2>
-          <p className="text-gray-700 mb-6">
-            You need to be logged in to view this dashboard.
-          </p>
-          <div className="flex justify-between">
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition"
-            >
-              Register
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  if (isLoading) {
-    return (
-      <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-                    <div className="flex space-x-4">
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-green-500 border-t-red-500"></div>
-                        <div className="w-8 h-8 rounded-full animate-spin border-4 border-red-500 border-t-green-500"></div>
-                    </div>
-                </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">
-            Access Denied
-          </h2>
-          <p className="text-gray-700 mb-6">
-            You need to be logged in to view this dashboard.
-          </p>
-          <div className="flex justify-between">
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition"
-            >
-              Register
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-100">
