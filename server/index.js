@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './DB/connectDB.js';
 import authRoutes from './routes/auth.route.js';
+import deliveryRoutes from './routes/delivery.route.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -19,6 +20,7 @@ app.use(cors({
   credentials: true 
 }));
 app.use('/api/auth', authRoutes);
+app.use('/api/delivery', deliveryRoutes); 
 
 if(process.env.NODE_ENV==='production'){
   app.use(express.static(path.join(__dirname, '../client/dist')));

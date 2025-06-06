@@ -172,17 +172,11 @@ export const refreshToken = async (req, res) => {
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
             return res.status(401).json({ message: 'No refresh token provided' });
-        }
-
-        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        }   
         
-        // Verify user still exists
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
         const user = await User.findById(decoded.userId);
-        if (!user) {
-            return res.status(403).json({ message: 'User no longer exists' });
-        }
 
-        // Generate new access token
         const newAccessToken = jwt.sign(
             { userId: user._id, role: user.role },
             process.env.JWT_SECRET,
@@ -205,26 +199,7 @@ export const refreshToken = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-        console.log('checkAuth token:', token);
-        
-        if (!token) {
-            return res.status(401).json({ message: 'No token provided' });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('checkAuth decoded token:', decoded);
-        
-        // Verify user still exists
-        const user = await User.findById(decoded.userId);
-        if (!user) {
-            return res.status(403).json({ message: 'User no longer exists' });
-        }
-
-        return res.status(200).json({ message: 'Authentication successful', user });
-
+        return res.status(200).json({ message: 'Authentication successful', user: req.user });
     } catch (error) {
         console.error('Authentication error:', error);
         if (error.name === 'JsonWebTokenError') {

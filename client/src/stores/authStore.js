@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.VITE_ENV==='development' ? import.meta.env.VITE_API_URL : "/api"; 
+const API_URL = import.meta.env.VITE_ENV==='development' ? import.meta.env.VITE_API_URL : "/api"; 
 
 const useAuthStore = create((set) => ({
   user: null,
@@ -98,16 +98,16 @@ const useAuthStore = create((set) => ({
       }
       if(!token) {
         // If no token, try to refresh
-        const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
-        localStorage.setItem('token', response.data.accessToken);
-        set({ token: response.data.accessToken });
-      }
+      const response = await axios.get(`${API_URL}/auth/refreshtoken`, {}, { withCredentials: true });
+      localStorage.setItem('token', response.data.accessToken);
+      set({ token: response.data.accessToken });
+    }
 
-      const response = await axios.get(`${API_URL}/auth/checkAuth`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+    const response = await axios.get(`${API_URL}/auth/checkauth`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
       
       set({
         user: response.data.user,
