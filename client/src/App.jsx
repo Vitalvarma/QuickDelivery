@@ -1,14 +1,25 @@
-import LoginPage from "./pages/loginPage.jsx"
-import RegisterPage from "./pages/registerPage.jsx"
+import LoginPage from "./pages/authentication/loginPage.jsx"
+import RegisterPage from "./pages/authentication/registerPage.jsx"
+
+import Orders from "./pages/order/orders.jsx"
+import OrderPage from "./pages/order/orderPage.jsx"
+import DeliveryOrderForm from "./pages/order/placeDelivery.jsx"
+
+import Profile from "./pages/profile.jsx"
+import ErrorPage from "./pages/errorPage.jsx"
 import Dashboard from "./pages/dashboard.jsx"
 import Navbar from "./components/navbar.jsx";
+
+import useAuthStore from "./stores/authStore.js";
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import useAuthStore from "./stores/authStore.js";
 import { useEffect } from "react";
 
 function App() {
-  const { isAuthenticated, isLoading, checkAuth , user } = useAuthStore();
+
+  const { isAuthenticated, isLoading, checkAuth,user } = useAuthStore();
+
 
   useEffect(() => {
     checkAuth();
@@ -27,21 +38,13 @@ function App() {
       {isAuthenticated && <Navbar/> }
       
       <Routes>
+        <Route path="*" element={<ErrorPage />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} >
-          <Route path="/profile" element={<Profile/>} />
-
-          {user?.role === "customer" && (
-            <Route path='/orders' element={<Orders/>} >
-              <Route path=":orderId" element={<OrderDetails />} />
-            </Route>
-          )}
-          {user?.role === "delivery" && (
-            <Route path="/deliveries" element={<Deliveries />} >
-              <Route path=":deliveryId" element={<DeliveryDetails />} />
-            </Route>
-          )}
-          <Route path="*" element={<ErrorPage />} />
+          <Route path="profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} />
+          <Route path='orders' element={isAuthenticated ? <Orders /> : <Navigate to="/login" replace />}>
+            {(isAuthenticated && user.role==='customer') && <Route path="create" element={<DeliveryOrderForm />} />}
+          </Route>
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

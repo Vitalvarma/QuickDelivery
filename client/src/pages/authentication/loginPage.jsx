@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useAuthStore from "../stores/authStore";
+import useAuthStore from "../../stores/authStore.js";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {

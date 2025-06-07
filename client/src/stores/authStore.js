@@ -90,24 +90,25 @@ const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isLoading: true, error: null });
     try {
-      const token = localStorage.getItem('token');
-      const refreshToken = document.cookie.split('; ').find(row => row.startsWith('refreshToken='));
-      if (!token && !refreshToken) {
+      let token = localStorage.getItem('token');
+      const refreshTokenCookie = document.cookie.split('; ').find(row => row.startsWith('refreshToken='));
+      if (!token && !refreshTokenCookie) {
         set({ isAuthenticated: false });
         return;
       }
-      if(!token) {
+      if (!token && refreshTokenCookie) {
         // If no token, try to refresh
-      const response = await axios.get(`${API_URL}/auth/refreshtoken`, {}, { withCredentials: true });
-      localStorage.setItem('token', response.data.accessToken);
-      set({ token: response.data.accessToken });
-    }
-
-    const response = await axios.get(`${API_URL}/auth/checkauth`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+        const response = await axios.get(`${API_URL}/auth/refreshtoken`, { withCredentials: true });
+        token = response.data.accessToken;
+        localStorage.setItem('token', token);
+        set({ token });
       }
-    });
+
+      const response = await axios.get(`${API_URL}/auth/checkauth`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       set({
         user: response.data.user,

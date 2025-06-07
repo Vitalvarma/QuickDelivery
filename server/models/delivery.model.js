@@ -9,7 +9,6 @@ const deliverySchema = new mongoose.Schema({
     driverId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
     packageDetails: {
         type: String,

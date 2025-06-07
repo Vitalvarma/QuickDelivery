@@ -1,4 +1,3 @@
-
 import Delivery from '../models/delivery.model.js';
 
 export const createDelivery = async (req, res) => {
@@ -25,7 +24,7 @@ export const createDelivery = async (req, res) => {
         });
 
         await newDelivery.save();
-        res.status(201).json({ message: 'Delivery created successfully'});
+        res.status(201).json({ message: 'Delivery created successfully' , delivery: newDelivery });
     } catch (error) {
         res.status(500).json({ message: 'Error creating delivery', error: error.message });
     }
@@ -57,7 +56,7 @@ export const getDeliveries = async (req, res) => {
         const deliveries = await Delivery.find();
 
         const filteredDeliveries = deliveries.filter(delivery => 
-            delivery.status === 'pending' || delivery.driverId?.toString() === userId.toString()
+            delivery.deliveryStatus === 'pending' || delivery.driverId?.toString() === userId.toString()
         );
         res.status(200).json(filteredDeliveries);
     } catch (error) {
@@ -82,25 +81,59 @@ export const getDelivery = async (req, res) => {
 
 export const updateDelivery = async (req, res) => {
     const { id } = req.params;
-    const { driverId, deliveryStatus, deliveryRating, feedback } = req.body;
+    const user = req.user;
+    const { deliveryStatus, deliveryRating, feedback } = req.body;
 
     try {
-        const updatedDelivery = await Delivery.findByIdAndUpdate(id, {
-            driverId,
-            deliveryStatus,
-            deliveryRating,
-            feedback
-        }, { new: true });
-
-        if (!updatedDelivery) {
+        // First get the delivery to check permissions
+        const delivery = await Delivery.findById(id);
+        if (!delivery) {
             return res.status(404).json({ message: 'Delivery not found' });
         }
 
+        let updateData = {};
+        
+        // Customer can only update rating and feedback for delivered packages
+        if (user.role === 'customer') {
+            if (delivery.customerId.toString() !== user._id.toString()) {
+                return res.status(403).json({ message: 'Not authorized to update this delivery' });
+            }
+            
+            if (delivery.deliveryStatus !== 'delivered') {
+                return res.status(400).json({ message: 'You can only rate delivered packages' });
+            }
+            
+            updateData = {
+                deliveryRating,
+                feedback
+            };
+        } 
+        // Driver can only update status (pending -> in-progress)
+        else if (user.role === 'driver') {
+            if (delivery.driverId && delivery.driverId.toString() !== user._id.toString()) {
+                return res.status(403).json({ message: 'Not authorized to update this delivery' });
+            }
+            
+            if (deliveryStatus === 'in-progress' && delivery.deliveryStatus === 'pending') {
+                updateData = {
+                    deliveryStatus,
+                    driverId: user._id // Assign driver when they accept
+                };
+            } else {
+                return res.status(400).json({ 
+                    message: 'You can only change status from pending to in-progress' 
+                });
+            }
+        } else {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        const updatedDelivery = await Delivery.findByIdAndUpdate(id, updateData, { new: true });
         res.status(200).json(updatedDelivery);
     } catch (error) {
         res.status(500).json({ message: 'Error updating delivery', error: error.message });
     }
-}
+};
 
 export const deleteDelivery = async (req, res) => {
     const { id } = req.params;

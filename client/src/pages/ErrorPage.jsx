@@ -50,13 +50,13 @@ const ErrorPage = () => {
         </p>
         
         <div className="flex justify-center space-x-4">
-          <button
+          <button onClick={() => window.history.back()}
             className="px-4 py-2 rounded-md font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
           >
             Go Back
           </button>
           
-          <button
+          <button onClick={() => window.location.href = '/'}
             className="px-4 py-2 rounded-md font-medium text-white bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 transition-colors"
           >
             Home Page

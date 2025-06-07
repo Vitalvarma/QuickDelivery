@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import useDeliveryStore from '../../stores/deliveryStore';
 import * as z from 'zod';
 
 // Define validation schema
@@ -10,29 +10,33 @@ const deliverySchema = z.object({
   deliveryLocation: z.string().min(5, "Delivery location must be at least 5 characters"),
   packageWeight: z.number().min(0.1, "Weight must be at least 0.1 kg").max(50, "Maximum weight is 50 kg"),
   packageType: z.enum(['document', 'parcel', 'food', 'medicine', 'other']),
-  specialInstructions: z.string().optional()
 });
 
-const DeliveryOrderForm = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+const DeliveryOrderForm = () => {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(deliverySchema)
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { createDelivery,loading } = useDeliveryStore();
 
   const handleFormSubmit = async (data) => {
-    setIsSubmitting(true);
     try {
-      await onSubmit(data);
-      reset();
+      await createDelivery(data);
     } catch (error) {
       console.error("Submission error:", error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
+  if(loading){
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
+
   return (
+
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">New Delivery Order</h2>
       
@@ -126,20 +130,6 @@ const DeliveryOrderForm = ({ onSubmit }) => {
           {errors.packageType && (
             <p className="mt-1 text-sm text-red-600">{errors.packageType.message}</p>
           )}
-        </div>
-
-        {/* Special Instructions */}
-        <div>
-          <label htmlFor="specialInstructions" className="block text-sm font-medium text-gray-700">
-            Special Instructions
-          </label>
-          <textarea
-            id="specialInstructions"
-            {...register("specialInstructions")}
-            rows={2}
-            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            placeholder="Any special handling instructions"
-          />
         </div>
 
         {/* Submit Button */}
