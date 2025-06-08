@@ -56,7 +56,7 @@ export const getDeliveries = async (req, res) => {
         const deliveries = await Delivery.find();
 
         const filteredDeliveries = deliveries.filter(delivery => 
-            delivery.deliveryStatus === 'pending' || delivery.driverId?.toString() === userId.toString()
+            delivery.driverId?.toString() !== userId.toString()
         );
         res.status(200).json(filteredDeliveries);
     } catch (error) {
@@ -102,26 +102,29 @@ export const updateDelivery = async (req, res) => {
             if (delivery.deliveryStatus !== 'delivered') {
                 return res.status(400).json({ message: 'You can only rate delivered packages' });
             }
-            
+
             updateData = {
+                deliveryStatus,
                 deliveryRating,
                 feedback
             };
         } 
-        // Driver can only update status (pending -> in-progress)
+        // Driver can only update status (pending -> inprogress)
         else if (user.role === 'driver') {
             if (delivery.driverId && delivery.driverId.toString() !== user._id.toString()) {
                 return res.status(403).json({ message: 'Not authorized to update this delivery' });
             }
             
-            if (deliveryStatus === 'in-progress' && delivery.deliveryStatus === 'pending') {
+            if (deliveryStatus === 'inprogress' && delivery.deliveryStatus === 'pending' ||
+                deliveryStatus === 'pending' && delivery.deliveryStatus === 'inprogress' ||
+                deliveryStatus === 'delivered' && delivery.deliveryStatus === 'inprogress')
+            {
                 updateData = {
                     deliveryStatus,
-                    driverId: user._id // Assign driver when they accept
                 };
             } else {
                 return res.status(400).json({ 
-                    message: 'You can only change status from pending to in-progress' 
+                    message: 'You cannot do this'
                 });
             }
         } else {

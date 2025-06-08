@@ -9,6 +9,7 @@ import Profile from "./pages/profile.jsx"
 import ErrorPage from "./pages/errorPage.jsx"
 import Dashboard from "./pages/dashboard.jsx"
 import Navbar from "./components/navbar.jsx";
+import Setting from "./pages/settings.jsx";
 
 import useAuthStore from "./stores/authStore.js";
 
@@ -40,14 +41,16 @@ function App() {
       <Routes>
         <Route path="*" element={<ErrorPage />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} >
-          <Route path="profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} />
-          <Route path='orders' element={isAuthenticated ? <Orders /> : <Navigate to="/login" replace />}>
-            {(isAuthenticated && user.role==='customer') && <Route path="create" element={<DeliveryOrderForm />} />}
-          </Route>
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}/>
+        <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} />
+        <Route path="/orders" element={isAuthenticated ? <Orders /> : <Navigate to="/login" replace />} />
+        <Route path="/orders/:id" element={isAuthenticated ? <OrderPage /> : <Navigate to="/login" replace />} />
+        {(isAuthenticated && user.role === 'customer') && (
+          <Route path="/create" element={<DeliveryOrderForm />} />
+        )}
+        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to='/dashboard' replace/>} />
+        <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to='/dashboard' replace/>} />
+        <Route path="/settings" element={isAuthenticated ? <Setting/> : <Navigate to="/login" replace />}/>
       </Routes>
     </>
   )

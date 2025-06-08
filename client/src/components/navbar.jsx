@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const { isAuthenticated , user, logout } = useAuthStore();
 
   const handleLogout = async () => {
     await logout();
@@ -17,11 +17,19 @@ const Navbar = () => {
           <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 font-semibold">
             Dashboard
           </Link>
-          <Link to="/dashboard/profile" className="text-gray-700 hover:text-gray-900 font-semibold">
+          <Link to="/profile" className="text-gray-700 hover:text-gray-900 font-semibold">
             Profile
           </Link>
-          <Link to="/dashboard/orders" className="text-gray-700 hover:text-gray-900 font-semibold">
+          <Link to="/orders" className="text-gray-700 hover:text-gray-900 font-semibold">
             Orders
+          </Link>
+          {
+            isAuthenticated && user.role==='customer' && <Link to="/create" className="text-gray-700 hover:text-gray-900 font-semibold">
+            create
+          </Link>
+          }
+          <Link to="/settings" className="text-gray-700 hover:text-gray-900 font-semibold">
+            setting
           </Link>
         </div>
         <div className="flex items-center space-x-4">

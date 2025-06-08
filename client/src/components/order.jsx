@@ -16,43 +16,68 @@ const OrdersComponent = ({ order }) => {
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
-    <Link to={`${_id}`} className="block bg-white shadow-md rounded-lg p-4 mb-4 hover:shadow-lg transition">
-      <div className="grid grid-cols-2 gap-4 text-gray-700">
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Customer ID</p>
-          <p>{customerId ? customerId.toString() : 'N/A'}</p>
+    <Link 
+      to={`${_id}`} 
+      className="block bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-200"
+    >
+      <div className="p-5">
+        {/* Header with ID and status */}
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 truncate">
+            Order #{_id.slice(-6).toUpperCase()}
+          </h3>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            {packageType}
+          </span>
         </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Driver ID</p>
-          <p>{driverId ? driverId.toString() : 'N/A'}</p>
+
+        {/* Main content grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Package information */}
+          <div className="space-y-2">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Package Details</p>
+              <p className="text-gray-800 line-clamp-2">{packageDetails}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Weight</p>
+                <p className="text-gray-800">{packageWeight} kg</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Created</p>
+                <p className="text-gray-800">{formatDate(createdAt)}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Location information */}
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Pickup Location</p>
+              <p className="text-gray-800 truncate">{pickupLocation}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Delivery Location</p>
+              <p className="text-gray-800 truncate">{deliveryLocation}</p>
+            </div>
+          </div>
         </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Package Details</p>
-          <p>{packageDetails}</p>
-        </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Pickup Location</p>
-          <p>{pickupLocation}</p>
-        </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Delivery Location</p>
-          <p>{deliveryLocation}</p>
-        </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Package Weight</p>
-          <p>{packageWeight} kg</p>
-        </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Package Type</p>
-          <p>{packageType}</p>
-        </div>
-        <div className="border p-2 rounded">
-          <p className="font-semibold">Created At</p>
-          <p>{formatDate(createdAt)}</p>
+
+        {/* IDs at bottom */}
+        <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+          <span>Customer: {customerId?.toString() || 'N/A'}</span>
+          <span>Driver: {driverId?.toString() || 'Not assigned'}</span>
         </div>
       </div>
     </Link>

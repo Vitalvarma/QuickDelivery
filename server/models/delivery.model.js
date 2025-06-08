@@ -33,7 +33,7 @@ const deliverySchema = new mongoose.Schema({
     },
     deliveryStatus: {
         type: String,
-        enum: ['pending', 'in-progress', 'delivered', 'cancelled'],
+        enum: ['pending', 'inprogress', 'delivered','completed'],
         default: 'pending'
     },
     deliveryRating: {
