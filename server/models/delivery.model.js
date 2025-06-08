@@ -42,7 +42,7 @@ const deliverySchema = new mongoose.Schema({
         max: 5,
         default: null
     },
-    feedback: {
+    deliveryFeedback: {
         type: String,
         default: ''
     }

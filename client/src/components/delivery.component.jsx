@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const OrdersComponent = ({ order }) => {
+const DeliveryComponent = ({ delivery }) => {
   const {
     _id,
     customerId,
@@ -11,7 +11,7 @@ const OrdersComponent = ({ order }) => {
     packageWeight,
     packageType,
     createdAt,
-  } = order;
+  } = delivery;
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -34,7 +34,7 @@ const OrdersComponent = ({ order }) => {
         {/* Header with ID and status */}
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold text-gray-800 truncate">
-            Order #{_id.slice(-6).toUpperCase()}
+            Delivery #{_id.slice(-6).toUpperCase()}
           </h3>
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
             {packageType}
@@ -84,4 +84,4 @@ const OrdersComponent = ({ order }) => {
   );
 };
 
-export default OrdersComponent;
+export default DeliveryComponent;

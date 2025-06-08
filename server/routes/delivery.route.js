@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/createdelivery', isAuthenticated, createDelivery);
 router.get('/getdeliveriesdfcustomer', isAuthenticated, getDeliveriesByCustomers);
-router.get('/getDeliveries', isAuthenticated, getDeliveries); 
+router.get('/getdeliveries', isAuthenticated, getDeliveries); 
 router.get('/:id', isAuthenticated, getDelivery);
 router.put('/:id', isAuthenticated, updateDelivery);
 router.delete('/:id', isAuthenticated, deleteDelivery);

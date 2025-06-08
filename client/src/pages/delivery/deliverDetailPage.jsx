@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useDeliveryStore from '../../stores/deliveryStore';
 import useAuthStore from '../../stores/authStore';
+import {toast} from 'react-hot-toast'
 
-const OrderPage = () => {
+const DeliveryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentDelivery, loading, error, getDeliveryById, updateDelivery, deleteDelivery } = useDeliveryStore();
@@ -16,13 +17,13 @@ const OrderPage = () => {
   }, [id, getDeliveryById]);
 
   const handleDelivery =async ()=>{
-    console.log("DELIVERED THE PACKAGE");
     try{
       await updateDelivery(id, { deliveryStatus: "delivered" });
-      navigate("/orders");
+      navigate("/deliveries");
+      toast.success("Package delivered successfully");
     }
-    catch(error){
-      console.log(error);
+    catch{
+      toast.error("Failed to deliver package");
     }
     //need to write the code
   }
@@ -39,9 +40,10 @@ const OrderPage = () => {
         deliveryRating: parseInt(rating),
         feedback 
       });
-      window.location.reload();
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
+      navigate("/deliveries");
+      toast.success("Feedback submitted successfully");
+    } catch{
+      toast.error("Failed to submit feedback");
     }
   };
 
@@ -51,8 +53,10 @@ const OrderPage = () => {
       await updateDelivery(currentDelivery._id, { 
         deliveryStatus: 'inprogress', // Changed from status to deliveryStatus
       });
-    } catch (error) {
-      console.error("Error accepting delivery:", error);
+      navigate("/deliveries");
+      toast.success("Delivery accepted successfully");
+    } catch {
+      toast.error("Failed to accept delivery");
     }
   };
 
@@ -62,9 +66,11 @@ const OrderPage = () => {
       await updateDelivery(currentDelivery._id, { 
         deliveryStatus: 'pending', // Changed from status to deliveryStatus
       });
-      window.location.reload();
+      navigate("/deliveries");
+      toast.success("Delivery cancelled successfully");
     } catch (error) {
       console.error("Error cancelling delivery:", error);
+      toast.error("Failed to cancel delivery");
     }
   };
 
@@ -73,7 +79,8 @@ const OrderPage = () => {
     
     try {
       await deleteDelivery(currentDelivery._id);
-      navigate('/orders');
+      navigate('/deliveries');
+      toast.success("Delivery deleted successfully");
     } catch (error) {
       console.error("Error deleting delivery:", error);
     }
@@ -113,7 +120,7 @@ const OrderPage = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <h3 className="mt-2 text-lg font-medium text-gray-900">No delivery found</h3>
-        <p className="mt-1 text-gray-500">The requested delivery order could not be found.</p>
+        <p className="mt-1 text-gray-500">The requested delivery could not be found.</p>
       </div>
     );
   }
@@ -129,7 +136,7 @@ const OrderPage = () => {
     packageType,
     deliveryStatus,
     deliveryRating,
-    feedback,
+    deliveryFeedback,
     createdAt,
     updatedAt,
   } = currentDelivery;
@@ -177,10 +184,10 @@ const OrderPage = () => {
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Order #{_id.slice(-6).toUpperCase()}
+                Delivery #{_id.slice(-6).toUpperCase()}
               </h3>
               <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                Detailed information about this delivery order
+                Detailed information about this delivery
               </p>
             </div>
             <div>
@@ -270,7 +277,7 @@ const OrderPage = () => {
                 <div className="sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Feedback</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {feedback || (
+                    {deliveryFeedback || (
                       <span className="text-gray-400">No feedback provided</span>
                     )}
                   </dd>
@@ -322,7 +329,7 @@ const OrderPage = () => {
               onClick={handleDeleteDelivery}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
-              Delete Order
+              Delete Delivery
             </button>
           )}
         </div>
@@ -331,4 +338,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default DeliveryDetails;

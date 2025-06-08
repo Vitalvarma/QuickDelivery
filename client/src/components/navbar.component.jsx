@@ -20,8 +20,8 @@ const Navbar = () => {
           <Link to="/profile" className="text-gray-700 hover:text-gray-900 font-semibold">
             Profile
           </Link>
-          <Link to="/orders" className="text-gray-700 hover:text-gray-900 font-semibold">
-            Orders
+          <Link to="/deliveries" className="text-gray-700 hover:text-gray-900 font-semibold">
+            Deliveries
           </Link>
           {
             isAuthenticated && user.role==='customer' && <Link to="/create" className="text-gray-700 hover:text-gray-900 font-semibold">

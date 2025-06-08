@@ -51,7 +51,7 @@ const useDeliveryStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/delivery/getDeliveries`, {
+      const response = await axios.get(`${API_URL}/delivery/getdeliveries`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -95,14 +95,11 @@ const useDeliveryStore = create((set) => ({
         currentDelivery: response.data,
         loading: false
       }));
-      
-      return response.data;
     } catch (error) {
       set({ 
         error: error.response?.data?.message || 'Failed to update delivery', 
         loading: false 
       });
-      throw error; // Re-throw to handle in component if needed
     }
   },
 
@@ -119,10 +116,8 @@ const useDeliveryStore = create((set) => ({
         deliveries: state.deliveries.filter(delivery => delivery._id !== id),
         loading: false 
       }));
-      toast.success("order deleted");
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to delete delivery', loading: false });
-      toast.error(error.response?.data?.message || 'Failed to delete delivery');
     }
   },
 

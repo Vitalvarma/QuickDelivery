@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useDeliveryStore from '../../stores/deliveryStore';
 import * as z from 'zod';
+import { useNavigate } from 'react-router-dom';
 
 // Define validation schema
 const deliverySchema = z.object({
@@ -12,7 +13,9 @@ const deliverySchema = z.object({
   packageType: z.enum(['document', 'parcel', 'food', 'medicine', 'other']),
 });
 
-const DeliveryOrderForm = () => {
+const PlaceDeliveryForm = () => {
+  const navigate=useNavigate();
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(deliverySchema)
   });
@@ -22,6 +25,7 @@ const DeliveryOrderForm = () => {
   const handleFormSubmit = async (data) => {
     try {
       await createDelivery(data);
+      navigate('/deliveries')
     } catch (error) {
       console.error("Submission error:", error);
     }
@@ -38,7 +42,7 @@ const DeliveryOrderForm = () => {
   return (
     <div className="max-w-md mx-auto p-8 bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">New Delivery Order</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">New Delivery</h2>
         <p className="text-gray-600">Fill in the details to schedule your delivery</p>
       </div>
       
@@ -194,7 +198,7 @@ const DeliveryOrderForm = () => {
                 Processing...
               </span>
             ) : (
-              'Place Delivery Order'
+              'Place Delivery'
             )}
           </button>
         </div>
@@ -203,4 +207,4 @@ const DeliveryOrderForm = () => {
   );
 };
 
-export default DeliveryOrderForm;
+export default PlaceDeliveryForm;

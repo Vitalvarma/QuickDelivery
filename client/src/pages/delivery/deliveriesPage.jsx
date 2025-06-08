@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import OrdersComponent from '../../components/order';
+import DeliveryComponent from '../../components/delivery.component.jsx'
 import { Link } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore.js';
 import useDeliveryStore from '../../stores/deliveryStore.js';
 
-const Orders = () => {
+const Deliveries = () => {
   const { user } = useAuthStore();
   const { getCustomerDeliveries, getAllDeliveries, deliveries, loading } = useDeliveryStore();
   const [activeTab, setActiveTab] = useState('all');
@@ -46,8 +46,8 @@ const Orders = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Orders</h1>
-        <p className="text-gray-600">View and manage all your delivery orders</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Deliveries</h1>
+        <p className="text-gray-600">View and manage all your deliveries</p>
         
         {/* Status Tabs */}
         <div className="mt-6 border-b border-gray-200">
@@ -77,8 +77,8 @@ const Orders = () => {
         <>
           {filteredDeliveries.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDeliveries.map((order) => (
-                <OrdersComponent key={order._id} order={order} />
+              {filteredDeliveries.map((delivery) => (
+                <DeliveryComponent key={delivery._id} delivery={delivery} />
               ))}
             </div>
           ) : (
@@ -97,11 +97,11 @@ const Orders = () => {
                   d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h3 className="mt-2 text-lg font-medium text-gray-900">No orders</h3>
+              <h3 className="mt-2 text-lg font-medium text-gray-900">No Deliveries</h3>
               <p className="mt-1 text-gray-500 mb-6">
                 {activeTab === 'all' 
-                  ? "You haven't placed any orders yet."
-                  : `No ${activeTab} orders found.`}
+                  ? "You haven't placed any Deliveries yet."
+                  : `No ${activeTab} Deliveries found.`}
               </p>
             </div>
           )}
@@ -110,7 +110,7 @@ const Orders = () => {
 
       {user?.role === 'customer' && (
         <div className="mt-8 border-t border-gray-200 pt-6 text-center">
-          <p className="text-gray-600 mb-4">Ready to create a new delivery order?</p>
+          <p className="text-gray-600 mb-4">Ready to create a new delivery?</p>
           <Link
             to="/create"
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
@@ -128,7 +128,7 @@ const Orders = () => {
                 clipRule="evenodd"
               />
             </svg>
-            Place New Order
+            Place New Delivery
           </Link>
         </div>
       )}
@@ -136,4 +136,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Deliveries;

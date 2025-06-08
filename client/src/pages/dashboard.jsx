@@ -13,7 +13,7 @@ const Dashboard = () => {
           Welcome to Your Dashboard, <span className="text-blue-600">{username}</span>
         </h1>
         <p className="text-gray-700">
-          Hello, <strong>{username}</strong>! Here you can manage your account and view your orders.
+          Hello, <strong>{username}</strong>! Here you can manage your account and view your Deliveries.
         </p>
       </header>
 
@@ -36,8 +36,8 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <h3 className="font-medium text-gray-900">Your Orders</h3>
-              <p className="text-gray-600 text-sm mt-1">View and manage your orders</p>
+              <h3 className="font-medium text-gray-900">Your Deliveries</h3>
+              <p className="text-gray-600 text-sm mt-1">View and manage your Deliveries</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <h3 className="font-medium text-gray-900">Account Settings</h3>

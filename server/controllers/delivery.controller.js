@@ -82,7 +82,7 @@ export const getDelivery = async (req, res) => {
 export const updateDelivery = async (req, res) => {
     const { id } = req.params;
     const user = req.user;
-    const { deliveryStatus, deliveryRating, feedback } = req.body;
+    const { deliveryStatus, deliveryRating, deliveryFeedback } = req.body;
 
     try {
         // First get the delivery to check permissions
@@ -106,7 +106,7 @@ export const updateDelivery = async (req, res) => {
             updateData = {
                 deliveryStatus,
                 deliveryRating,
-                feedback
+                deliveryFeedback
             };
         } 
         // Driver can only update status (pending -> inprogress)
