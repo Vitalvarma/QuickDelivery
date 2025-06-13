@@ -121,6 +121,52 @@ const useDeliveryStore = create((set) => ({
     }
   },
 
+  sendOtp: async (id) => {
+    set((state) => ({ ...state, loading: true, error: null }));
+    try {
+      const token = localStorage.getItem('token');
+      // Access currentDelivery from the current state
+      const currentDelivery = useDeliveryStore.getState().currentDelivery;
+      const response = await axios.post(`${API_URL}/otp/send`, {
+        deliveryId: id || currentDelivery?._id,
+        customerId: currentDelivery?.customerId
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      set((state) => ({ ...state, loading: false }));
+      toast.success(response.data.message || 'OTP sent successfully');
+      return true;
+    } catch (error) {
+      set((state) => ({ ...state, error: error.response?.data?.message || 'Failed to send OTP', loading: false }));
+      console.error('Error sending OTP in the store:', error);
+      toast.error(error.response?.data?.message);
+      return false;
+    }
+  },
+verifyOtp: async (otp, id) => {
+  set({ loading: true, error: null });
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_URL}/otp/verify`, {
+      deliveryId: id,
+      otp
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    set({ loading: false });
+    toast.success(response.data.message || 'OTP verified successfully');
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to verify OTP', loading: false });
+    toast.error(error.response?.data?.message || 'Failed to verify OTP');
+    return false;
+  }
+},
+
   clearCurrentDelivery: () => set({ currentDelivery: null }),
 }));
 

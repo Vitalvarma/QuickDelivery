@@ -46,6 +46,7 @@ const deliverySchema = new mongoose.Schema({
         type: String,
         default: ''
     }
+    
 }, {
     timestamps: true
 });

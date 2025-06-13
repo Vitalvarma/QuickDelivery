@@ -7,7 +7,7 @@ import {toast} from 'react-hot-toast'
 const DeliveryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentDelivery, loading, error, getDeliveryById, updateDelivery, deleteDelivery } = useDeliveryStore();
+  const { currentDelivery, loading, error, getDeliveryById, updateDelivery, deleteDelivery,sendOtp,verifyOtp } = useDeliveryStore();
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -18,6 +18,15 @@ const DeliveryDetails = () => {
 
   const handleDelivery =async ()=>{
     try{
+      const isOtpSent = await sendOtp(id);
+      if (!isOtpSent) {
+        return;
+      }
+      const otp=prompt("Enter the OTP sent to customer email id:");
+      const isOtpVerified = await verifyOtp(otp,id);
+      if (!isOtpVerified) {
+        return;
+      }
       await updateDelivery(id, { deliveryStatus: "delivered" });
       navigate("/deliveries");
       toast.success("Package delivered successfully");

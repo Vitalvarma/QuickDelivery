@@ -51,14 +51,16 @@ export const getDeliveries = async (req, res) => {
     if (!userId) {
         return res.status(400).json({ message: 'Not authorized to get deliveries' });
     }
-
+    
     try {
+
         const deliveries = await Delivery.find();
 
-        const filteredDeliveries = deliveries.filter(delivery => 
-            delivery.driverId?.toString() !== userId.toString()
-        );
-        res.status(200).json(filteredDeliveries);
+        const driverDeliveries = deliveries.filter(delivery => {
+            return ((delivery.deliveryStatus==='pending') || (delivery.driverId && delivery.driverId.toString() === userId.toString()));
+        })
+
+        res.status(200).json(driverDeliveries);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching deliveries', error: error.message });
     }
@@ -120,6 +122,7 @@ export const updateDelivery = async (req, res) => {
                 deliveryStatus === 'delivered' && delivery.deliveryStatus === 'inprogress')
             {
                 updateData = {
+                    driverId: user._id, // Assign driver if not already assigned
                     deliveryStatus,
                 };
             } else {
