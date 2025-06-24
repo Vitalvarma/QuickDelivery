@@ -28,9 +28,6 @@ const Navbar = () => {
             create
           </Link>
           }
-          <Link to="/settings" className="text-gray-700 hover:text-gray-900 font-semibold">
-            setting
-          </Link>
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-gray-700">Hello, {user?.username || 'User'}</span>

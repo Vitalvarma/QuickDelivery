@@ -3,12 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useDeliveryStore from '../../stores/deliveryStore';
 import useAuthStore from '../../stores/authStore';
 import {toast} from 'react-hot-toast'
+import { useState } from 'react';
+import RatingFeedbackPrompt from '../../components/feedbackprompt.controller.jsx';
+import OtpPrompt from '../../components/otpprompt.controller.jsx';
 
 const DeliveryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentDelivery, loading, error, getDeliveryById, updateDelivery, deleteDelivery,sendOtp,verifyOtp } = useDeliveryStore();
   const { user } = useAuthStore();
+  const [showRatingPrompt, setShowRatingPrompt] = useState(false);
+  const [showOtpPrompt, setShowOtpPrompt] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -22,33 +27,52 @@ const DeliveryDetails = () => {
       if (!isOtpSent) {
         return;
       }
-      const otp=prompt("Enter the OTP sent to customer email id:");
-      const isOtpVerified = await verifyOtp(otp,id);
-      if (!isOtpVerified) {
-        return;
-      }
-      await updateDelivery(id, { deliveryStatus: "delivered" });
-      navigate("/deliveries");
-      toast.success("Package delivered successfully");
+      setShowOtpPrompt(true);
     }
     catch{
       toast.error("Failed to deliver package");
     }
     //need to write the code
   }
+  const handleOtpConfirm = async (otp) => {
+    try {
+      const isVerified = await verifyOtp(otp,id);
+      if (isVerified) {
+        await updateDelivery(id, {
+          deliveryStatus: 'delivered', // Changed from status to deliveryStatus
+          });
+        navigate("/deliveries");
+        toast.success("Delivery marked as delivered successfully");
+      } else {
+        toast.error("InValid OTP")
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+    }
+    setShowOtpPrompt(false);
+  };
 
-  const handleSubmitFeedback = async () => {
-    const rating = prompt("Enter the rating for this delivery (1-5):");
-    const feedback = prompt("Enter your feedback for this delivery:");
-    
-    if (!rating || !feedback) return;
-    
+  const handleResendOtp = () => {
+    try{
+      sendOtp(id);
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+    }
+    setShowOtpPrompt(true);
+  };
+
+  const handleSubmitFeedback =async () =>{
+    setShowRatingPrompt(true);
+  }
+
+  const handleRatingSubmit = async ({rating, feedback}) => {
     try {
       await updateDelivery(id, { 
         deliveryStatus: "completed",
         deliveryRating: parseInt(rating),
-        feedback 
+        deliveryFeedback: feedback 
       });
+      setShowRatingPrompt(false);
       navigate("/deliveries");
       toast.success("Feedback submitted successfully");
     } catch{
@@ -168,7 +192,6 @@ const DeliveryDetails = () => {
       inprogress: 'bg-blue-100 text-blue-800',
       delivered: 'bg-purple-100 text-purple-800',
       completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800'
     };
     
     const statusLabels = {
@@ -176,7 +199,6 @@ const DeliveryDetails = () => {
       inprogress: 'In Progress',
       delivered: 'Delivered',
       completed: 'Completed',
-      cancelled: 'Cancelled'
     };
     
     return (
@@ -343,6 +365,17 @@ const DeliveryDetails = () => {
           )}
         </div>
       </div>
+      <OtpPrompt
+        isOpen={showOtpPrompt}
+        onConfirm={handleOtpConfirm}
+        onCancel={() => setShowOtpPrompt(false)}
+        onResend={handleResendOtp}
+      />
+      <RatingFeedbackPrompt
+        isOpen={showRatingPrompt}
+        onConfirm={handleRatingSubmit}
+        onCancel={() => setShowRatingPrompt(false)}
+      />
     </div>
   );
 };

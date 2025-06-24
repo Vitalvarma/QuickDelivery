@@ -8,8 +8,6 @@ import PlaceDeliveryForm from "./pages/delivery/placeDelivery.jsx"
 import Profile from "./pages/profile.jsx"
 import ErrorPage from "./pages/errorPage.jsx"
 import Dashboard from "./pages/dashboard.jsx"
-import Setting from "./pages/settings.jsx";
-
 import Navbar from "./components/navbar.component.jsx";
 
 import useAuthStore from "./stores/authStore.js";
@@ -51,7 +49,6 @@ function App() {
         )}
         <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to='/dashboard' replace/>} />
         <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to='/dashboard' replace/>} />
-        <Route path="/settings" element={isAuthenticated ? <Setting/> : <Navigate to="/login" replace />}/>
       </Routes>
     </>
   )
