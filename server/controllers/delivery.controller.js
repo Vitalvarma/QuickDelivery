@@ -1,4 +1,7 @@
 import Delivery from '../models/delivery.model.js';
+import { calculateCost } from '../utils/calculateCost.js';
+import { calculateDistance } from '../utils/calculateDistance.js';
+import { uploadDeliveryImage } from '../utils/cloudinary.js';
 
 export const createDelivery = async (req, res) => {
     const customerId = req.user._id;
@@ -9,24 +12,58 @@ export const createDelivery = async (req, res) => {
     }
 
     if (!packageDetails || !pickupLocation || !deliveryLocation || !packageWeight || !packageType) {
-        return res.status(400).json({ message: 'All fields are required' });
+        return res.status(400).json({ message: 'All fields are required pingpong' });
     }
 
+    if(pickupLocation === deliveryLocation) {
+        return res.status(400).json({ message: 'Pickup and delivery locations cannot be the same' });
+    }
+
+    if (packageWeight <= 0) {
+        return res.status(400).json({ message: 'Package weight must be greater than 0' });
+    }
+
+    // Parse locations and convert lat/lon to numbers
+    let parsedPickupLocation, parsedDeliveryLocation;
     try {
-        const newDelivery = new Delivery({
-            customerId,
-            driverId: null, // Initially no driver assigned
+        parsedPickupLocation = JSON.parse(pickupLocation);
+        parsedDeliveryLocation = JSON.parse(deliveryLocation);
+
+        parsedPickupLocation.lat = parseFloat(parsedPickupLocation.lat);
+        parsedPickupLocation.lon = parseFloat(parsedPickupLocation.lon);
+        parsedDeliveryLocation.lat = parseFloat(parsedDeliveryLocation.lat);
+        parsedDeliveryLocation.lon = parseFloat(parsedDeliveryLocation.lon);
+    } catch (err) {
+        return res.status(400).json({ message: 'Invalid location data' });
+    }
+
+    const distance = calculateDistance(parsedPickupLocation, parsedDeliveryLocation);
+    const cost = calculateCost(packageWeight, distance);
+
+    try {
+        const deliveryData = {
+            customerId: req.user._id,
             packageDetails,
-            pickupLocation,
-            deliveryLocation,
-            packageWeight,
-            packageType
-        });
+            pickupLocation: parsedPickupLocation,
+            deliveryLocation: parsedDeliveryLocation,
+            packageWeight: parseFloat(packageWeight),
+            packageType,
+            deliveryStatus: 'pending',
+            cost,
+            distance
+        };
+
+        if(req.file) {
+            deliveryData.imageUrl = req.file.path;
+            deliveryData.imagePublicId = req.file.filename; 
+        }
+        const newDelivery = new Delivery(deliveryData);
 
         await newDelivery.save();
         res.status(201).json({ message: 'Delivery created successfully' , delivery: newDelivery });
     } catch (error) {
-        res.status(500).json({ message: 'Error creating delivery', error: error.message });
+        console.error('Error creating delivery:', error);
+        res.status(500).json({ message: 'Error creating delivery', error: error.message, stack: error.stack });
     }
 }
 
@@ -146,6 +183,10 @@ export const deleteDelivery = async (req, res) => {
 
     try {
         const deletedDelivery = await Delivery.findByIdAndDelete(id);
+
+        if (deletedDelivery.imagePublicId) {
+      await cloudinary.uploader.destroy(delivery.imagePublicId);
+    }
         if (!deletedDelivery) {
             return res.status(404).json({ message: 'Delivery not found' });
         }

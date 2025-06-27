@@ -1,10 +1,11 @@
 import Router from 'express';
-import { createDelivery,updateDelivery, deleteDelivery,getDeliveries,getDeliveriesByCustomers,getDelivery } from '../controllers/delivery.controller.js';
+import { createDelivery, updateDelivery, deleteDelivery, getDeliveries, getDeliveriesByCustomers, getDelivery } from '../controllers/delivery.controller.js';
+import { uploadDeliveryImage } from '../utils/cloudinary.js';
 import { isAuthenticated } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.post('/createdelivery', isAuthenticated, createDelivery);
+router.post('/createdelivery', isAuthenticated, uploadDeliveryImage,createDelivery);
 router.get('/getdeliveriesdfcustomer', isAuthenticated, getDeliveriesByCustomers);
 router.get('/getdeliveries', isAuthenticated, getDeliveries); 
 router.get('/:id', isAuthenticated, getDelivery);

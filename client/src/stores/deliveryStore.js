@@ -14,13 +14,13 @@ const useDeliveryStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`${API_URL}/delivery/createdelivery`, {
-        ...deliveryData
-      }, {
+      const config = {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
         }
-      });
+      };
+      const response = await axios.post(`${API_URL}/delivery/createdelivery`, deliveryData, config);
       set((state) => ({
         deliveries: [...state.deliveries, response.data.delivery],
         loading: false

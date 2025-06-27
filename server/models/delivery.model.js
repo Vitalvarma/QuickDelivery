@@ -1,4 +1,22 @@
 import mongoose from 'mongoose';
+const locationSchema = new mongoose.Schema({
+    display_name: {
+        type: String,
+        required: true
+    },
+    place_id: {
+        type: String,
+        required: true
+    },
+    lat: {
+        type: String,
+        required: true
+    },
+    lon: {
+        type: String,
+        required: true
+    },
+});
 
 const deliverySchema = new mongoose.Schema({
     customerId:{
@@ -15,12 +33,28 @@ const deliverySchema = new mongoose.Schema({
         required: true
     },
     pickupLocation: {
-        type: String,
+        type: locationSchema,
         required: true
     },
     deliveryLocation: {
-        type: String,
+        type: locationSchema,
         required: true
+    },
+    distance: {
+        type: Number,
+        required: true
+    },
+    cost: {
+        type: Number,
+        required: true
+    },
+    imageUrl: {
+        type: String,
+        default: ''
+    },
+    imagePublicId: {
+        type: String,
+        default: ''
     },
     packageWeight: {
         type: Number,
