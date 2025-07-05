@@ -38,7 +38,7 @@ const DeliveryComponent = ({ delivery }) => {
     
     const statusLabels = {
       pending: 'Pending',
-      inprogress: 'In Transit',
+      inprogress: 'In Progress',
       delivered: 'Delivered',
       completed: 'Completed',
     };

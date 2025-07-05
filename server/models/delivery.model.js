@@ -70,6 +70,11 @@ const deliverySchema = new mongoose.Schema({
         enum: ['pending', 'inprogress', 'delivered','completed'],
         default: 'pending'
     },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'paid'],
+        default: 'pending'
+    },
     deliveryRating: {
         type: Number,
         min: 1,

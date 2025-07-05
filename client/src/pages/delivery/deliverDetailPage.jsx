@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import { useState } from 'react';
 import RatingFeedbackPrompt from '../../components/feedbackprompt.controller.jsx';
 import OtpPrompt from '../../components/otpprompt.controller.jsx';
+import usePaymentStore from '../../stores/paymentStore.js';
 
 const DeliveryDetails = () => {
   const { id } = useParams();
@@ -14,12 +15,19 @@ const DeliveryDetails = () => {
   const { user } = useAuthStore();
   const [showRatingPrompt, setShowRatingPrompt] = useState(false);
   const [showOtpPrompt, setShowOtpPrompt] = useState(false);
+  const {amount,setAmount}=usePaymentStore();
 
   useEffect(() => {
     if (id) {
       getDeliveryById(id);
     }
   }, [id, getDeliveryById]);
+
+  useEffect(()=>{
+    if(currentDelivery){
+      setAmount(currentDelivery.cost)
+      }
+  }, [currentDelivery, setAmount])
 
   const handleDelivery = async () => {
     try {
@@ -116,7 +124,17 @@ const DeliveryDetails = () => {
     } catch (error) {
       console.error("Error deleting delivery:", error);
     }
-  };
+  }
+  
+  const handlePaymentClick = async () =>{
+    if (!currentDelivery) return;
+    try {
+        navigate(`/payment`);
+        
+    } catch {
+          toast.error("Failed to make payment");
+    }
+  }
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -238,6 +256,7 @@ const DeliveryDetails = () => {
     deliveryStatus,
     deliveryRating,
     deliveryFeedback,
+    paymentStatus,
     distance,
     cost,
     createdAt,
@@ -446,7 +465,7 @@ const DeliveryDetails = () => {
               </>
             )}
             
-            {user?.role === 'customer' && deliveryStatus === 'delivered' && (
+            {user?.role === 'customer' && deliveryStatus === 'delivered'&& paymentStatus==='paid' &&(
               <button
                 onClick={handleSubmitFeedback}
                 className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium rounded-lg shadow-md hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
@@ -463,6 +482,24 @@ const DeliveryDetails = () => {
                 Delete Delivery
               </button>
             )}
+
+            {user?.role === 'customer' && deliveryStatus === 'delivered' && paymentStatus==='paid'&& (
+              <button disabled={true}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-md hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200">
+                  PAID
+              </button>
+            )}
+
+            {
+              user?.role === 'customer' && deliveryStatus === 'delivered' && paymentStatus==='pending'&&(
+                <button
+                onClick={handlePaymentClick}
+                className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium rounded-lg shadow-md hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
+              >
+                pay {(amount / 100).toFixed(2)}
+              </button>
+              )
+            }
           </div>
         </div>
       </div>

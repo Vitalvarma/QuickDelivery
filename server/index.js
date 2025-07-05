@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './DB/connectDB.js';
 import authRoutes from './routes/auth.route.js';
 import deliveryRoutes from './routes/delivery.route.js';
+import paymentRoutes from './routes/payment.route.js';
 import otpRoutes from './routes/otp.route.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -23,6 +24,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/delivery', deliveryRoutes); 
 app.use('/api/otp',otpRoutes);
+app.use('/api/payment',paymentRoutes);
 
 if(process.env.NODE_ENV==='production'){
   app.use(express.static(path.join(__dirname, '../client/dist')));

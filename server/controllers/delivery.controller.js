@@ -1,7 +1,6 @@
 import Delivery from '../models/delivery.model.js';
 import { calculateCost } from '../utils/calculateCost.js';
 import { calculateDistance } from '../utils/calculateDistance.js';
-import { uploadDeliveryImage } from '../utils/cloudinary.js';
 
 export const createDelivery = async (req, res) => {
     const customerId = req.user._id;
@@ -121,7 +120,7 @@ export const getDelivery = async (req, res) => {
 export const updateDelivery = async (req, res) => {
     const { id } = req.params;
     const user = req.user;
-    const { deliveryStatus, deliveryRating, deliveryFeedback } = req.body;
+    const { deliveryStatus, deliveryRating, deliveryFeedback,paymentStatus } = req.body;
 
     try {
         // First get the delivery to check permissions
@@ -138,8 +137,10 @@ export const updateDelivery = async (req, res) => {
                 return res.status(403).json({ message: 'Not authorized to update this delivery' });
             }
             
-            if (delivery.deliveryStatus !== 'delivered') {
-                return res.status(400).json({ message: 'You can only rate delivered packages' });
+            if (delivery.deliveryStatus === 'delivered' && delivery.paymentStatus === 'pending') {
+                updateData = { paymentStatus };
+                const updatedDelivery = await Delivery.findByIdAndUpdate(id, updateData, { new: true });
+                return res.status(200).json(updatedDelivery);
             }
 
             updateData = {

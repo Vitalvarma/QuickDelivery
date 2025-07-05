@@ -4,6 +4,7 @@ import RegisterPage from "./pages/authentication/registerPage.jsx"
 import DeliveryDetails from "./pages/delivery/deliverDetailPage.jsx"
 import Deliveries from "./pages/delivery/deliveriesPage.jsx"
 import PlaceDeliveryForm from "./pages/delivery/placeDelivery.jsx"
+import PaymentPage from "./pages/payment.jsx"
 
 import Profile from "./pages/profile.jsx"
 import ErrorPage from "./pages/errorPage.jsx"
@@ -35,7 +36,7 @@ function App() {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      {isAuthenticated && <Navbar/> }
+      {isAuthenticated && window.location.pathname !== '/payment' && <Navbar />}
       
       <Routes>
         <Route path="*" element={<ErrorPage />} />
@@ -49,6 +50,7 @@ function App() {
         )}
         <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to='/dashboard' replace/>} />
         <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to='/dashboard' replace/>} />
+        <Route path="/payment" element={isAuthenticated ? <PaymentPage /> : <Navigate to="/login" replace />}/>
       </Routes>
     </>
   )

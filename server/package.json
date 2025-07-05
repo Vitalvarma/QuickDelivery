@@ -23,7 +23,8 @@
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",
     "quickdelivery": "file:..",
-    "resend": "^4.5.2"
+    "resend": "^4.5.2",
+    "stripe": "^18.3.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
