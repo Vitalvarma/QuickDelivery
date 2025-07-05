@@ -246,8 +246,8 @@ const DeliveryDetails = () => {
 
   const {
     _id,
-    customerId,
-    driverId,
+    customerName,
+    driverName,
     packageDetails,
     pickupLocation,
     deliveryLocation,
@@ -342,8 +342,8 @@ const DeliveryDetails = () => {
                 </h3>
                 <dl className="space-y-4">
                   <div className="flex justify-between">
-                    <dt className="text-sm font-medium text-gray-500">Customer ID</dt>
-                    <dd className="text-sm font-medium text-indigo-600 text-right">{customerId ? customerId.toString() : 'N/A'}</dd>
+                    <dt className="text-sm font-medium text-gray-500">Customer Name</dt>
+                    <dd className="text-sm font-medium text-indigo-600 text-right">{customerName ? customerName.toString() : 'N/A'}</dd>
                   </div>
                   <div className="flex justify-between items-center">
                     <dt className="text-sm font-medium text-gray-500">Rating</dt>
@@ -377,8 +377,8 @@ const DeliveryDetails = () => {
                 </h3>
                 <dl className="space-y-4">
                   <div className="flex justify-between">
-                    <dt className="text-sm font-medium text-gray-500">Driver ID</dt>
-                    <dd className="text-sm font-medium text-indigo-600 text-right">{driverId ? driverId.toString() : 'Not assigned'}</dd>
+                    <dt className="text-sm font-medium text-gray-500">Driver Name</dt>
+                    <dd className="text-sm font-medium text-indigo-600 text-right">{driverName ? driverName.toString() : 'Not assigned'}</dd>
                   </div>
                 </dl>
               </div>

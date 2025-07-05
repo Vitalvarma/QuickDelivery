@@ -4,8 +4,8 @@ const DeliveryComponent = ({ delivery }) => {
   const {
     _id,
     imageUrl,
-    customerId,
-    driverId,
+    customerName,
+    driverName,
     packageDetails,
     pickupLocation,
     deliveryLocation,
@@ -158,8 +158,12 @@ const DeliveryComponent = ({ delivery }) => {
             {formatDate(createdAt)}
           </div>
           <div className="text-xs space-x-2">
-            <span className="text-gray-500">Cust: {customerId?.toString().slice(-4) || 'N/A'}</span>
-            <span className="text-gray-500">Driv: {driverId?.toString().slice(-4) || '--'}</span>
+            {
+              <span className="text-gray-500">Cust: {customerName?.toString() || 'N/A'}</span>
+            }
+            {
+              <span className="text-gray-500">Driv: {driverName?.toString() || '--'}</span>
+            }
           </div>
         </div>
       </div>

@@ -28,6 +28,13 @@ const deliverySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
+    customerName:{
+        type: String,
+        required: true
+    },
+    driverName:{
+        type: String,
+    },
     packageDetails: {
         type: String,
         required: true

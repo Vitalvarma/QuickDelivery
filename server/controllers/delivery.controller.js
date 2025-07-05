@@ -4,6 +4,7 @@ import { calculateDistance } from '../utils/calculateDistance.js';
 
 export const createDelivery = async (req, res) => {
     const customerId = req.user._id;
+    const customerName=req.user.username;
     const { packageDetails, pickupLocation, deliveryLocation, packageWeight, packageType } = req.body;
 
     if(customerId === undefined) {
@@ -42,6 +43,7 @@ export const createDelivery = async (req, res) => {
     try {
         const deliveryData = {
             customerId: req.user._id,
+            customerName,
             packageDetails,
             pickupLocation: parsedPickupLocation,
             deliveryLocation: parsedDeliveryLocation,
@@ -161,6 +163,7 @@ export const updateDelivery = async (req, res) => {
             {
                 updateData = {
                     driverId: user._id, // Assign driver if not already assigned
+                    driverName: user.username,
                     deliveryStatus,
                 };
             } else {
