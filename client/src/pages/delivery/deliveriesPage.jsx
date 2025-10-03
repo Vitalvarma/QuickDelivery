@@ -19,6 +19,7 @@ const Deliveries = () => {
 
   // Filter and sort deliveries
   const filteredDeliveries = deliveries
+    .filter(delivery => delivery) // Remove undefined/null deliveries
     .filter(delivery => {
       switch (activeTab) {
         case 'pending':
