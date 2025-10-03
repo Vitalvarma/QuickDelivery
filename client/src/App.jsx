@@ -45,7 +45,7 @@ function App() {
         <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} />
         <Route path="/deliveries" element={isAuthenticated ? <Deliveries/> : <Navigate to="/login" replace />} />
         <Route path="/deliveries/:id" element={isAuthenticated ? <DeliveryDetails /> : <Navigate to="/login" replace />} />
-        {(isAuthenticated && user.role === 'customer') && (
+        {(isAuthenticated && user && user?.role === 'customer') && (
           <Route path="/create" element={<PlaceDeliveryForm />} />
         )}
         <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to='/dashboard' replace/>} />

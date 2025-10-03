@@ -24,7 +24,7 @@ const Navbar = () => {
             Deliveries
           </Link>
           {
-            isAuthenticated && user.role==='customer' && <Link to="/create" className="text-gray-700 hover:text-gray-900 font-semibold">
+            isAuthenticated && user?.role==='customer' && <Link to="/create" className="text-gray-700 hover:text-gray-900 font-semibold">
             create
           </Link>
           }
