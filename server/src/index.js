@@ -25,7 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/delivery', deliveryRoutes); 
 app.use('/api/otp',otpRoutes);
 app.use('/api/payment',paymentRoutes);
-
+/*
 if(process.env.NODE_ENV==='production'){
   app.use(express.static(path.join(__dirname, '../client/dist')));
   
@@ -33,6 +33,7 @@ if(process.env.NODE_ENV==='production'){
      res.sendFile(path.join(__dirname, '../client',"dist", 'index.html'));
   });
 }
+*/
 
 app.listen(PORT, ()=>{
     connectDB();
