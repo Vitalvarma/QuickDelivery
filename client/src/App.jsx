@@ -7,7 +7,7 @@ import PlaceDeliveryForm from "./pages/delivery/placeDelivery.jsx"
 import PaymentPage from "./pages/payment.jsx"
 
 import Profile from "./pages/profile.jsx"
-import ErrorPage from "./pages/errorPage.jsx"
+import ErrorPage from "./pages/ErrorPage.jsx"
 import Dashboard from "./pages/dashboard.jsx"
 import Navbar from "./components/navbar.component.jsx";
 
